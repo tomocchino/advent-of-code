@@ -4,28 +4,11 @@ function sum(array) {
   return array.reduce((a, b) => a + b, 0);
 }
 
-// Part 1
-{
-  let maxCalories = 0;
-  let inventories = input.split("\n\n");
-  inventories.forEach((inventory) => {
-    let snackCalories = inventory.split("\n").map((str) => parseInt(str, 10));
-    maxCalories = Math.max(maxCalories, sum(snackCalories));
-  });
+let calorieSums = input.split("\n\n").map((inventory) => {
+  return sum(inventory.split("\n").map((str) => parseInt(str, 10)));
+});
 
-  console.log(`Part 1: ${maxCalories}`);
-}
+calorieSums.sort((a, b) => b - a).slice(0, 3);
 
-// Part 2
-{
-  let inventories = input.split("\n\n");
-  let calorieCounts = inventories.map((inventory) => {
-    let snackCalories = inventory.split("\n").map((str) => parseInt(str, 10));
-    return sum(snackCalories);
-  });
-
-  let topThree = calorieCounts.sort((a, b) => b - a).slice(0, 3);
-  let topThreeSum = sum(topThree);
-
-  console.log(`Part 2: ${topThreeSum}`);
-}
+console.log(`Part 1: ${calorieSums[0]}`);
+console.log(`Part 2: ${sum(calorieSums.slice(0, 3))}`);
