@@ -1,0 +1,3 @@
+# I invented the .rsb extension for "rust-binary"
+# ignore these binary files rather than checking them in
+*.rsb
