@@ -1,68 +1,69 @@
-const input = require("fs").readFileSync(`${__dirname}/input.txt`).toString();
+const input = require("fs").readFileSync(`${__dirname}/sample.txt`).toString();
 
-// Part 1
-{
-  let W = 6;
-  let D = 3;
-  let L = 0;
+const MOVES = {
+  rock: 1,
+  paper: 2,
+  scissors: 3,
+};
 
-  let points = {
-    X: 1,
-    Y: 2,
-    Z: 3,
-  };
+const OUTCOMES = {
+  win: 6,
+  draw: 3,
+  loss: 0,
+};
 
-  let outcomes = {
-    "A X": D,
-    "A Y": W,
-    "A Z": L,
-    "B X": L,
-    "B Y": D,
-    "B Z": W,
-    "C X": W,
-    "C Y": L,
-    "C Z": D,
-  };
-
-  let sum = 0;
-  let rounds = input.split("\n");
-  rounds.forEach((round) => {
-    sum += outcomes[round] + points[round.slice(-1)];
-  });
-
-  console.log(`Part 1: ${sum}`);
+function scoreRound(move, outcome) {
+  return MOVES[move] + OUTCOMES[outcome];
 }
 
-// Part 2
+let partOneMoves = {
+  X: "rock",
+  Y: "paper",
+  Z: "scissors",
+};
 
-{
-  let A = 1; // rock
-  let B = 2; // paper
-  let C = 3; // scissors
+let partOneOutcomes = {
+  "A X": "draw",
+  "A Y": "win",
+  "A Z": "loss",
+  "B X": "loss",
+  "B Y": "draw",
+  "B Z": "win",
+  "C X": "win",
+  "C Y": "loss",
+  "C Z": "draw",
+};
 
-  let outcome = {
-    X: 0, // loss
-    Y: 3, // draw
-    Z: 6, // win
-  };
+let partTwoMoves = {
+  "A X": "scissors",
+  "A Y": "rock",
+  "A Z": "paper",
+  "B X": "rock",
+  "B Y": "paper",
+  "B Z": "scissors",
+  "C X": "paper",
+  "C Y": "scissors",
+  "C Z": "rock",
+};
 
-  let choices = {
-    "A X": C,
-    "A Y": A,
-    "A Z": B,
-    "B X": A,
-    "B Y": B,
-    "B Z": C,
-    "C X": B,
-    "C Y": C,
-    "C Z": A,
-  };
+let partTwoOutcomes = {
+  X: "loss",
+  Y: "draw",
+  Z: "win",
+};
 
-  let sum = 0;
-  let rounds = input.split("\n");
-  rounds.forEach((round) => {
-    sum += choices[round] + outcome[round.slice(-1)];
-  });
+let partOneSum = 0;
+let partTwoSum = 0;
+input.split("\n").forEach((round) => {
+  partOneSum += scoreRound(
+    partOneMoves[round.slice(-1)],
+    partOneOutcomes[round]
+  );
+  partTwoSum += scoreRound(
+    partTwoMoves[round],
+    partTwoOutcomes[round.slice(-1)]
+  );
+});
 
-  console.log(`Part 2: ${sum}`);
-}
+console.log(`Part 1: ${partOneSum}`);
+console.log(`Part 2: ${partTwoSum}`);
