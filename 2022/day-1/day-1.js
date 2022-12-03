@@ -7,7 +7,7 @@ function sum(array) {
 let calorieSums = input
   .split("\n\n")
   .map((inventory) => {
-    return sum(inventory.split("\n").map((str) => parseInt(str, 10)));
+    return sum(inventory.split("\n").map(Number));
   })
   .sort((a, b) => b - a);
 
