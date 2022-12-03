@@ -1,10 +1,10 @@
-input = open("day-1/input.txt", "r").read()
+input = open("day-1/input.txt").read()
 
 calorie_sums = []
 
 for line in input.split("\n\n"):
     inventory = line.split("\n")
-    calorie_sums.append(sum([int(str) for str in inventory]))
+    calorie_sums.append(sum(map(int, inventory)))
 
 calorie_sums.sort(reverse=True)
 
