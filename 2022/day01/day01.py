@@ -1,4 +1,4 @@
-input = open("day-1/input.txt").read()
+input = open("day01/input.txt").read()
 
 calorie_sums = []
 

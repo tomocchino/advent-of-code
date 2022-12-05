@@ -1,4 +1,4 @@
-input = open("day-4/input.txt").read()
+input = open("day04/input.txt").read()
 
 contains = []
 overlaps = []
