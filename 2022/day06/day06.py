@@ -1,4 +1,5 @@
-input = open("day06/input.txt").read()
+import os
+input = open(os.path.dirname(__file__) + "/input.txt").read()
 
 def find_marker(string, marker_length):
     index = 0

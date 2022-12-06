@@ -1,4 +1,5 @@
-input = open("day01/input.txt").read()
+import os
+input = open(os.path.dirname(__file__) + "/input.txt").read()
 
 calorie_sums = []
 
