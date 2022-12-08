@@ -1,34 +1,21 @@
-const input = require("fs").readFileSync(`${__dirname}/input.txt`).toString();
+const input = require("fs").readFileSync(`${__dirname}/sample.txt`).toString();
 const lines = input.split("\n");
 
-function createGrid(lines) {
-  let grid = [];
-  let rows = lines.length;
-  let cols = lines[0].length;
-  for (let row = 0; row < rows; row++) {
-    for (let col = 0; col < cols; col++) {
-      if (!grid[row]) {
-        grid[row] = [];
-      }
-      grid[row].push(Number(lines[row][col]));
-    }
-  }
-  return grid;
+let numRows = lines.length;
+let numCols = lines[0].length;
+let gridString = lines.join("");
+
+function getPoint(row, col) {
+  return gridString[row * numCols + col];
 }
 
-function treeIsVisible(grid, row, col) {
-  let numRows = grid.length;
-  let numCols = grid[0].length;
-  if (row == 0 || col == 0 || row == numRows - 1 || col == numCols - 1) {
-    return true;
-  }
-
-  let point = grid[row][col];
+function treeIsVisible(row, col) {
+  let point = getPoint(row, col);
 
   let up = row;
   let upIsClear = true;
   while (--up >= 0) {
-    let next = grid[up][col];
+    let next = getPoint(up, col);
     if (next >= point) {
       upIsClear = false;
     }
@@ -36,8 +23,8 @@ function treeIsVisible(grid, row, col) {
 
   let right = col;
   let rightIsClear = true;
-  while (++right < grid.length) {
-    let next = grid[row][right];
+  while (++right < numCols) {
+    let next = getPoint(row, right);
     if (next >= point) {
       rightIsClear = false;
     }
@@ -45,8 +32,8 @@ function treeIsVisible(grid, row, col) {
 
   let down = row;
   let downIsClear = true;
-  while (++down < grid.length) {
-    let next = grid[down][col];
+  while (++down < numRows) {
+    let next = getPoint(down, col);
     if (next >= point) {
       downIsClear = false;
     }
@@ -55,7 +42,7 @@ function treeIsVisible(grid, row, col) {
   let left = col;
   let leftIsClear = true;
   while (--left >= 0) {
-    let next = grid[row][left];
+    let next = getPoint(row, left);
     if (next >= point) {
       leftIsClear = false;
     }
@@ -64,34 +51,30 @@ function treeIsVisible(grid, row, col) {
   return upIsClear || rightIsClear || downIsClear || leftIsClear;
 }
 
-let grid = createGrid(lines);
-console.log(grid, "\n");
-
-let visibleTrees = 0;
-grid.forEach((row, ii) => {
-  row.forEach((cell, jj) => {
-    if (treeIsVisible(grid, ii, jj)) {
-      visibleTrees++;
+function getVisibleTreeCount() {
+  let visibleTrees = 0;
+  for (let row = 0; row < numRows; row++) {
+    for (let col = 0; col < numCols; col++) {
+      if (treeIsVisible(row, col)) {
+        visibleTrees++;
+      }
     }
-  });
-});
+  }
+  return visibleTrees;
+}
 
-console.log(`\nPart 1: ${visibleTrees}`);
-
-function findScenicScore(grid, row, col) {
-  let numRows = grid.length;
-  let numCols = grid[0].length;
+function getScenicScore(row, col) {
   if (row == 0 || col == 0 || row == numRows - 1 || col == numCols - 1) {
     return true;
   }
 
-  let point = grid[row][col];
+  let point = getPoint(row, col);
 
   let up = row;
   let upScore = 0;
   let upIsClear = true;
   while (upIsClear && --up >= 0) {
-    let next = grid[up][col];
+    let next = getPoint(up, col);
     if (next >= point) {
       upIsClear = false;
     }
@@ -101,8 +84,8 @@ function findScenicScore(grid, row, col) {
   let right = col;
   let rightScore = 0;
   let rightIsClear = true;
-  while (rightIsClear && ++right < grid.length) {
-    let next = grid[row][right];
+  while (rightIsClear && ++right < numCols) {
+    let next = getPoint(row, right);
     if (next >= point) {
       rightIsClear = false;
     }
@@ -112,8 +95,8 @@ function findScenicScore(grid, row, col) {
   let down = row;
   let downScore = 0;
   let downIsClear = true;
-  while (downIsClear && ++down < grid.length) {
-    let next = grid[down][col];
+  while (downIsClear && ++down < numRows) {
+    let next = getPoint(down, col);
     if (next >= point) {
       downIsClear = false;
     }
@@ -124,7 +107,7 @@ function findScenicScore(grid, row, col) {
   let leftScore = 0;
   let leftIsClear = true;
   while (leftIsClear && --left >= 0) {
-    let next = grid[row][left];
+    let next = getPoint(row, left);
     if (next >= point) {
       leftIsClear = false;
     }
@@ -134,11 +117,15 @@ function findScenicScore(grid, row, col) {
   return upScore * rightScore * leftScore * downScore;
 }
 
-let scenicScores = [];
-for (let row = 1; row < grid.length - 1; row++) {
-  for (let col = 1; col < grid[row].length - 1; col++) {
-    scenicScores.push(findScenicScore(grid, row, col));
+function getScenicScores() {
+  let scenicScores = [];
+  for (let row = 1; row < numRows - 1; row++) {
+    for (let col = 1; col < numCols - 1; col++) {
+      scenicScores.push(getScenicScore(row, col));
+    }
   }
+  return scenicScores;
 }
-console.log(scenicScores);
-console.log(`Part 2: ${Math.max(...scenicScores)}`);
+
+console.log(`\nPart 1: ${getVisibleTreeCount()}`);
+console.log(`Part 2: ${Math.max(...getScenicScores())}`);
