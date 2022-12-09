@@ -9,7 +9,7 @@ function getTree(row, col) {
   return Number(grid[row * numCols + col]);
 }
 
-function getTreeInfo(row, col, direction) {
+function getTreeInfo(row, col, dir) {
   let score = 0;
   let isClear = true;
   let currentTree = getTree(row, col);
@@ -19,23 +19,10 @@ function getTreeInfo(row, col, direction) {
     score++;
   }
 
-  if (direction == "n") {
-    while (isClear && --row >= 0) {
-      checkTree(row, col);
-    }
-  } else if (direction == "e") {
-    while (isClear && ++col < numCols) {
-      checkTree(row, col);
-    }
-  } else if (direction == "s") {
-    while (isClear && ++row < numRows) {
-      checkTree(row, col);
-    }
-  } else if (direction == "w") {
-    while (isClear && --col >= 0) {
-      checkTree(row, col);
-    }
-  }
+  while (dir == "n" && isClear && --row >= 0) checkTree(row, col);
+  while (dir == "w" && isClear && --col >= 0) checkTree(row, col);
+  while (dir == "s" && isClear && ++row < numRows) checkTree(row, col);
+  while (dir == "e" && isClear && ++col < numCols) checkTree(row, col);
 
   return { isClear, score };
 }
@@ -45,14 +32,14 @@ let scenicScores = [];
 for (let row = 0; row < numRows; row++) {
   for (let col = 0; col < numCols; col++) {
     let n = getTreeInfo(row, col, "n");
-    let e = getTreeInfo(row, col, "e");
-    let s = getTreeInfo(row, col, "s");
     let w = getTreeInfo(row, col, "w");
+    let s = getTreeInfo(row, col, "s");
+    let e = getTreeInfo(row, col, "e");
 
-    if (n.isClear || e.isClear || s.isClear || w.isClear) {
+    scenicScores.push(n.score * w.score * s.score * e.score);
+    if (n.isClear || w.isClear || s.isClear || e.isClear) {
       visibleTrees++;
     }
-    scenicScores.push(n.score * e.score * s.score * w.score);
   }
 }
 
