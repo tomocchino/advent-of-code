@@ -1,4 +1,4 @@
-const input = require("fs").readFileSync(`${__dirname}/sample.txt`).toString();
+const input = require("fs").readFileSync(`${__dirname}/input.txt`).toString();
 const lines = input.split("\n");
 
 let numRows = lines.length;
@@ -9,123 +9,74 @@ function getPoint(row, col) {
   return gridString[row * numCols + col];
 }
 
-function treeIsVisible(row, col) {
+function getDirectionalTreeInfo(row, col, direction) {
   let point = getPoint(row, col);
-
-  let up = row;
-  let upIsClear = true;
-  while (--up >= 0) {
-    let next = getPoint(up, col);
-    if (next >= point) {
-      upIsClear = false;
-    }
-  }
-
-  let right = col;
-  let rightIsClear = true;
-  while (++right < numCols) {
-    let next = getPoint(row, right);
-    if (next >= point) {
-      rightIsClear = false;
-    }
-  }
-
-  let down = row;
-  let downIsClear = true;
-  while (++down < numRows) {
-    let next = getPoint(down, col);
-    if (next >= point) {
-      downIsClear = false;
-    }
-  }
-
-  let left = col;
-  let leftIsClear = true;
-  while (--left >= 0) {
-    let next = getPoint(row, left);
-    if (next >= point) {
-      leftIsClear = false;
-    }
-  }
-
-  return upIsClear || rightIsClear || downIsClear || leftIsClear;
-}
-
-function getVisibleTreeCount() {
-  let visibleTrees = 0;
-  for (let row = 0; row < numRows; row++) {
-    for (let col = 0; col < numCols; col++) {
-      if (treeIsVisible(row, col)) {
-        visibleTrees++;
+  let isClear = true;
+  let score = 0;
+  switch (direction) {
+    case "up":
+      while (isClear && --row >= 0) {
+        let next = getPoint(row, col);
+        if (next >= point) {
+          isClear = false;
+        }
+        score++;
       }
-    }
+      break;
+    case "right":
+      while (isClear && ++col < numCols) {
+        let next = getPoint(row, col);
+        if (next >= point) {
+          isClear = false;
+        }
+        score++;
+      }
+      break;
+    case "down":
+      while (isClear && ++row < numRows) {
+        let next = getPoint(row, col);
+        if (next >= point) {
+          isClear = false;
+        }
+        score++;
+      }
+      break;
+    case "left":
+      while (isClear && --col >= 0) {
+        let next = getPoint(row, col);
+        if (next >= point) {
+          isClear = false;
+        }
+        score++;
+      }
+      break;
   }
-  return visibleTrees;
+  return { isClear, score };
 }
 
-function getScenicScore(row, col) {
-  if (row == 0 || col == 0 || row == numRows - 1 || col == numCols - 1) {
-    return true;
-  }
+let visibleTrees = 0;
+let scenicScores = [];
+for (let row = 0; row < numRows; row++) {
+  for (let col = 0; col < numCols; col++) {
+    let up = getDirectionalTreeInfo(row, col, "up");
+    let right = getDirectionalTreeInfo(row, col, "right");
+    let down = getDirectionalTreeInfo(row, col, "down");
+    let left = getDirectionalTreeInfo(row, col, "left");
 
-  let point = getPoint(row, col);
-
-  let up = row;
-  let upScore = 0;
-  let upIsClear = true;
-  while (upIsClear && --up >= 0) {
-    let next = getPoint(up, col);
-    if (next >= point) {
-      upIsClear = false;
+    if (up.isClear || right.isClear || down.isClear || left.isClear) {
+      visibleTrees++;
     }
-    upScore++;
+    scenicScores.push(up.score * right.score * down.score * left.score);
   }
-
-  let right = col;
-  let rightScore = 0;
-  let rightIsClear = true;
-  while (rightIsClear && ++right < numCols) {
-    let next = getPoint(row, right);
-    if (next >= point) {
-      rightIsClear = false;
-    }
-    rightScore++;
-  }
-
-  let down = row;
-  let downScore = 0;
-  let downIsClear = true;
-  while (downIsClear && ++down < numRows) {
-    let next = getPoint(down, col);
-    if (next >= point) {
-      downIsClear = false;
-    }
-    downScore++;
-  }
-
-  let left = col;
-  let leftScore = 0;
-  let leftIsClear = true;
-  while (leftIsClear && --left >= 0) {
-    let next = getPoint(row, left);
-    if (next >= point) {
-      leftIsClear = false;
-    }
-    leftScore++;
-  }
-
-  return upScore * rightScore * leftScore * downScore;
 }
 
-function getScenicScores() {
-  let scenicScores = [];
-  for (let row = 1; row < numRows - 1; row++) {
-    for (let col = 1; col < numCols - 1; col++) {
-      scenicScores.push(getScenicScore(row, col));
-    }
-  }
-  return scenicScores;
-}
+console.log(`\nPart 1: ${visibleTrees}`);
+console.log(`Part 2: ${Math.max(...scenicScores)}`);
 
-console.log(`\nPart 1: ${getVisibleTreeCount()}`);
-console.log(`Part 2: ${Math.max(...getScenicScores())}`);
+// Sample
+// Part 1: 21
+// Part 2: 8
+
+// Input
+// Part 1: 1538
+// Part 2: 496125
